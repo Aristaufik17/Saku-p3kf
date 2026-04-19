@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Belajar Interaktif | Materi & Kuis</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #e9f0fc 0%, #d9e3f0 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 1300px;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+
+    .login-card {
+      background: white;
+      max-width: 400px;
+      width: 90%;
+      padding: 2rem 1.8rem;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeUp 0.3s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-card h2 {
+      margin-bottom: 1.5rem;
+      color: #1e3c72;
+      font-weight: 600;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 40px;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .login-card input:focus {
+      border-color: #2a6f97;
+      box-shadow: 0 0 0 2px rgba(42, 111, 151, 0.2);
+    }
+
+    .login-card button {
+      width: 100%;
+      background: #2a6f97;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .login-card button:hover {
+      background: #1e4e6c;
+      transform: scale(0.97);
+    }
+
+    .error-msg {
+      color: #c44536;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+
+    .main-dashboard {
+      display: none;
+    }
+
+    .navbar {
+      background: white;
+      padding: 1rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, #1e3c72, #2a6f97);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .user-welcome {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-welcome span {
+      font-weight: 500;
+      color: #2c3e66;
+    }
+
+    .logout-btn {
+      background: #e0e7ff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #cbd5e1;
+    }
+
+    .menu-tabs {
+      display: flex;
+      background: white;
+      padding: 0 1rem;
+      gap: 0.5rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: 1rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #4a627a;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-btn.active {
+      color: #2a6f97;
+      border-bottom-color: #2a6f97;
+    }
+
+    .content-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      margin: 1.5rem;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      min-height: 450px;
+    }
+
+    .panel {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .panel.active-panel {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .materi-card {
+      background: #f8fafc;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+      border-left: 6px solid #2a6f97;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .materi-card h3 {
+      color: #0f2c3f;
+      margin-bottom: 0.5rem;
+    }
+
+    .quiz-question {
+      background: #ffffffdd;
+      padding: 1rem;
+      border-radius: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-option {
+      display: block;
+      margin: 0.6rem 0;
+      padding: 0.6rem 1rem;
+      background: #f1f5f9;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .quiz-option:hover {
+      background: #e2e8f0;
+    }
+
+    .quiz-option.selected {
+      background: #bdd9ff;
+      border: 1px solid #2a6f97;
+      font-weight: 500;
+    }
+
+    .quiz-btn, .reset-quiz {
+      background: #2a6f97;
+      border: none;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 40px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .quiz-result {
+      margin-top: 20px;
+      font-weight: bold;
+      background: #e9f5fe;
+      padding: 12px;
+      border-radius: 20px;
+    }
+
+    .profil-card {
+      background: #f1f5f9;
+      border-radius: 1.2rem;
+      padding: 1.8rem;
+      text-align: center;
+    }
+    .profil-icon {
+      font-size: 4rem;
+      background: #cbdff2;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+    }
+    hr {
+      margin: 1rem 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #5e6f8d;
+    }
+
+    @media (max-width: 680px) {
+      .menu-tabs {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .tab-btn {
+        padding: 0.7rem 1rem;
+      }
+      .content-panel {
+        padding: 1rem;
+        margin: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container" id="appContainer">
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+      <h2>✏️ Masuk ke Pembelajaran</h2>
+      <input type="text" id="loginName" placeholder="Nama lengkap" autocomplete="off">
+      <div id="loginError" class="error-msg"></div>
+      <button id="doLoginBtn">Mulai Belajar</button>
+      <p style="margin-top: 12px; font-size: 12px;">Masukkan nama untuk mengakses materi & kuis</p>
+    </div>
+  </div>
+
+  <div id="mainDashboard" class="main-dashboard">
+    <div class="navbar">
+      <div class="logo">📘 BelajarCeria</div>
+      <div class="user-welcome">
+        <span id="displayName"></span>
+        <button id="logoutBtnNav" class="logout-btn">Keluar</button>
+      </div>
+    </div>
+
+    <div class="menu-tabs">
+      <button class="tab-btn" data-tab="materi">📖 Materi</button>
+      <button class="tab-btn" data-tab="kuis">🧠 Kuis</button>
+      <button class="tab-btn" data-tab="profil">👤 Profil</button>
+    </div>
+
+    <div class="content-panel">
+      <div id="materiPanel" class="panel">
+        <h2>📚 Materi Pembelajaran Dasar Web & JavaScript</h2>
+        <div class="materi-card">
+          <h3>1. HTML (HyperText Markup Language)</h3>
+          <p>HTML adalah kerangka dasar setiap halaman web. Menggunakan elemen seperti heading, paragraf, gambar, dan tautan. Contoh: <code>&lt;h1&gt;Judul&lt;/h1&gt;</code></p>
+        </div>
+        <div class="materi-card">
+          <h3>2. CSS (Cascading Style Sheets)</h3>
+          <p>CSS digunakan untuk mempercantik tampilan: warna, layout, font, dan efek animasi. Flexbox dan Grid adalah teknik modern untuk tata letak.</p>
+        </div>
+        <div class="materi-card">
+          <h3>3. JavaScript (JS)</h3>
+          <p>JS membuat halaman menjadi interaktif: merespon klik, memvalidasi form, manipulasi DOM, hingga membuat kuis seperti yang ada di web ini!</p>
+        </div>
+        <div class="materi-card">
+          <h3>🌟 Tips Belajar</h3>
+          <p>Praktik langsung dengan menulis kode, kerjakan kuis, dan eksplorasi proyek kecil. Konsistensi adalah kunci!</p>
+        </div>
+      </div>
+
+      <div id="kuisPanel" class="panel">
+        <h2>🧪 Kuis Pengetahuan Dasar Web</h2>
+        <div id="quizContainer"></div>
+        <div id="quizResultArea" class="quiz-result" style="display: none;"></div>
+        <button id="resetQuizBtn" class="reset-quiz" style="display: none;">🔄 Ulangi Kuis</button>
+      </div>
+
+      <div id="profilPanel" class="panel">
+        <div class="profil-card">
+          <div class="profil-icon">👩‍🎓</div>
+          <h2 id="profileName"></h2>
+          <p><strong>Bergabung sebagai pelajar aktif</strong></p>
+          <hr>
+          <p>📌 Email: belajar@student.com (demo)</p>
+          <p>📊 Statistik: <span id="quizStatMsg">Belum mengerjakan kuis</span></p>
+          <button id="resetAllQuizStat" style="margin-top: 1rem; background:#ddd; border:none; padding:6px 16px; border-radius:50px;">Reset Riwayat Kuis</button>
+        </div>
+      </div>
+    </div>
+    <footer>© 2025 BelajarCeria — platform belajar interaktif</footer>
+  </div>
+</div>
+
+<script>
+  const quizData = [
+    {
+      question: "Apa kepanjangan dari HTML?",
+      options: ["Hyper Text Markup Language", "High Tech Modern Link", "Hyper Transfer Mark Language", "Home Tool Markup Language"],
+      correct: 0
+    },
+    {
+      question: "CSS digunakan untuk ...",
+      options: ["Mengatur struktur halaman", "Mengatur gaya dan tampilan", "Menambah interaksi logika", "Menyimpan data pengguna"],
+      correct: 1
+    },
+    {
+      question: "Manakah cara benar menulis fungsi di JavaScript?",
+      options: ["function = myFunc()", "def myFunc()", "function myFunc() {}", "create myFunc() => {}"],
+      correct: 2
+    }
+  ];
+
+  let currentUser = null;
+  let quizUserAnswers = {};
+  let quizSubmitted = false;
+  let currentQuizScore = null;
+
+  const loginOverlay = document.getElementById('loginOverlay');
+  const mainDashboard = document.getElementById('mainDashboard');
+  const loginNameInput = document.getElementById('loginName');
+  const loginError = document.getElementById('loginError');
+  const doLoginBtn = document.getElementById('doLoginBtn');
+  const logoutBtnNav = document.getElementById('logoutBtnNav');
+  const displayNameSpan = document.getElementById('displayName');
+  const profileNameEl = document.getElementById('profileName');
+  const quizStatMsgSpan = document.getElementById('quizStatMsg');
+  const resetAllQuizStatBtn = document.getElementById('resetAllQuizStat');
+  const resetQuizBtn = document.getElementById('resetQuizBtn');
+  const quizResultArea = document.getElementById('quizResultArea');
+
+  function saveUserQuizState(username) {
+    if (!username) return;
+    const key = `quiz_${username}`;
+    const state = { answers: quizUserAnswers, submitted: quizSubmitted, score: currentQuizScore };
+    localStorage.setItem(key, JSON.stringify(state));
+  }
+
+  function loadUserQuizState(username) {
+    if (!username) return;
+    const key = `quiz_${username}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        quizUserAnswers = state.answers || {};
+        quizSubmitted = state.submitted || false;
+        currentQuizScore = state.score !== undefined ? state.score : null;
+      } catch(e) { console.warn(e); }
+    } else {
+      quizUserAnswers = {};
+      quizSubmitted = false;
+      currentQuizScore = null;
+    }
+    renderQuiz();
+    updateQuizStatInProfil();
+  }
+
+  function resetQuizForUser() {
+    if (!currentUser) return;
+    quizUserAnswers = {};
+    quizSubmitted = false;
+    currentQuizScore = null;
+    saveUserQuizState(currentUser.name);
+    renderQuiz();
+    updateQuizStatInProfil();
+    if (quizResultArea) quizResultArea.style.display = "none";
+    if (resetQuizBtn) resetQuizBtn.style.display = "none";
+  }
+
+  function renderQuiz() {
+    const container = document.getElementById('quizContainer');
+    if (!container) return;
+    if (quizSubmitted) {
+      let score = currentQuizScore;
+      if (score === null) {
+        let correctCount = 0;
+        quizData.forEach((q, idx) => {
+          const userAns = quizUserAnswers[idx];
+          if (userAns !== undefined && userAns === q.correct) correctCount++;
+        });
+        score = correctCount;
+        currentQuizScore = score;
+        saveUserQuizState(currentUser.name);
+      }
+      const total = quizData.length;
+      container.innerHTML = `
+        <div style="background:#e2f0e8; padding:1rem; border-radius:1rem;">
+          <h3>✅ Hasil Kuis</h3>
+          <p>Skor Anda: <strong>${score} / ${total}</strong> (${Math.round(score/total*100)}%)</p>
+          <hr>
+          <h4>📋 Jawaban Anda:</h4>
+          ${quizData.map((q, idx) => {
+            const userChoice = quizUserAnswers[idx];
+            const isCorrect = (userChoice === q.correct);
+            const answerText = (userChoice !== undefined) ? q.options[userChoice] : "Tidak dijawab";
+            const correctText = q.options[q.correct];
+            return `<div style="margin-bottom: 12px; border-left: 4px solid ${isCorrect ? '#2b7a4b' : '#c2410c'}; padding-left: 12px;">
+                      <strong>${idx+1}. ${q.question}</strong><br>
+                      <span>Jawabanmu: ${answerText} ${isCorrect ? '✓' : '✗'}</span><br>
+                      <span style="font-size:0.85rem; color:#2c5a2e;">Jawaban benar: ${correctText}</span>
+                    </div>`;
+          }).join('')}
+          <button id="retakeQuizBtn" class="quiz-btn" style="margin-top:20px;">🔄 Ambil Kuis Lagi</button>
+        </div>
+      `;
+      const retakeBtn = document.getElementById('retakeQuizBtn');
+      if (retakeBtn) retakeBtn.addEventListener('click', () => { resetQuizForUser(); });
+      if (resetQuizBtn) resetQuizBtn.style.display = "none";
+      quizResultArea.style.display = "none";
+      return;
+    }
+
+    let html = '';
+    quizData.forEach((q, idx) => {
+      const selectedIdx = quizUserAnswers[idx];
+      html += `
+        <div class="quiz-question" data-qidx="${idx}">
+          <strong>${idx+1}. ${q.question}</strong>
+          <div class="quiz-options-group" id="options-group-${idx}">
+            ${q.options.map((opt, optIdx) => {
+              const isSelected = (selectedIdx === optIdx);
+              return `<div class="quiz-option ${isSelected ? 'selected' : ''}" data-qidx="${idx}" data-optidx="${optIdx}">
+                        ${String.fromCharCode(65+optIdx)}. ${opt}
+                      </div>`;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    });
+    html += `<button id="submitQuizBtn" class="quiz-btn">✅ Submit Jawaban</button>`;
+    container.innerHTML = html;
+
+    document.querySelectorAll('.quiz-option').forEach(optDiv => {
+      optDiv.addEventListener('click', (e) => {
+        if (quizSubmitted) return;
+        const qIdx = parseInt(optDiv.dataset.qidx);
+        const optIdx = parseInt(optDiv.dataset.optidx);
+        quizUserAnswers[qIdx] = optIdx;
+        saveUserQuizState(currentUser.name);
+        const parentGroup = document.getElementById(`options-group-${qIdx}`);
+        if (parentGroup) {
+          parentGroup.querySelectorAll('.quiz-option').forEach(opt => { opt.classList.remove('selected'); });
+          optDiv.classList.add('selected');
+        }
+      });
+    });
+
+    const submitBtn = document.getElementById('submitQuizBtn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', () => {
+        if (quizSubmitted) return;
+        let answeredCount = 0;
+        quizData.forEach((_, idx) => { if (quizUserAnswers[idx] !== undefined) answeredCount++; });
+        if (answeredCount < quizData.length) {
+          alert(`Silakan jawab semua soal terlebih dahulu! (${answeredCount}/${quizData.length} terjawab)`);
+          return;
+        }
+        let correct = 0;
+        quizData.forEach((q, idx) => { if (quizUserAnswers[idx] === q.correct) correct++; });
+        currentQuizScore = correct;
+        quizSubmitted = true;
+        saveUserQuizState(currentUser.name);
+        renderQuiz();
+        updateQuizStatInProfil();
+        if (resetQuizBtn) resetQuizBtn.style.display = "none";
+      });
+    }
+    if (resetQuizBtn) {
+      resetQuizBtn.style.display = "inline-block";
+      resetQuizBtn.onclick = () => {
+        if (confirm('Reset semua jawaban kuis? Data akan hilang.')) { resetQuizForUser(); }
+      };
+    }
+    if (quizResultArea) quizResultArea.style.display = "none";
+  }
+
+  function updateQuizStatInProfil() {
+    if (!currentUser) return;
+    if (quizSubmitted && currentQuizScore !== null) {
+      quizStatMsgSpan.innerHTML = `✨ Telah menyelesaikan kuis dengan skor ${currentQuizScore} / ${quizData.length} (${Math.round(currentQuizScore/quizData.length*100)}%) ✨`;
+    } else {
+      const answered = Object.keys(quizUserAnswers).length;
+      if (answered > 0 && !quizSubmitted) {
+        quizStatMsgSpan.innerHTML = `📝 Sedang mengerjakan kuis (${answered}/${quizData.length} soal terjawab). Submit untuk nilai.`;
+      } else {
+        quizStatMsgSpan.innerHTML = `📌 Belum mengerjakan kuis. Ayo coba tantangan!`;
+      }
+    }
+  }
+
+  function refreshAfterLogin() {
+    if (!currentUser) return;
+    displayNameSpan.innerText = `Halo, ${currentUser.name}`;
+    profileNameEl.innerText = currentUser.name;
+    loadUserQuizState(currentUser.name);
+    renderQuiz();
+    updateQuizStatInProfil();
+    showPanel('materi');
+  }
+    
+  function showPanel(panelId) {
+    document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active-panel'));
+    const activePanel = document.getElementById(`${panelId}Panel`);
+    if (activePanel) activePanel.classList.add('active-panel');
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if (btn.dataset.tab === panelId) { btn.classList.add('active'); } 
+      else { btn.classList.remove('active'); }
+    });
+    if (panelId === 'kuis') { renderQuiz(); }
+    if (panelId === 'profil') { updateQuizStatInProfil(); }
+  }
+
+  function handleLogin() {
+    let name = loginNameInput.value.trim();
+    if (name === "") {
+      loginError.innerText = "Nama tidak boleh kosong!";
+      return;
+    }
+    if (name.length > 30) name = name.slice(0,30);
+    currentUser = { name: name };
+    loadUserQuizState(currentUser.name);
+    loginOverlay.style.display = 'none';
+    mainDashboard.style.display = 'block';
+    refreshAfterLogin();
+  }
+
+  function handleLogout() {
+    if (currentUser) saveUserQuizState(currentUser.name);
+    currentUser = null;
+    loginNameInput.value = '';
+    loginError.innerText = '';
+    quizUserAnswers = {};
+    quizSubmitted = false;
+    currentQuizScore = null;
+    loginOverlay.style.display = 'flex';
+    mainDashboard.style.display = 'none';
+  }
+
+  function resetQuizStatFromProfil() {
+    if (!currentUser) return;
+    if (confirm('Reset semua progres kuis Anda? Jawaban akan dihapus.')) {
+      resetQuizForUser();
+      alert('Progres kuis telah direset!');
+    }
+  }
+
+  doLoginBtn.addEventListener('click', handleLogin);
+  loginNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
+  logoutBtnNav.addEventListener('click', handleLogout);
+  resetAllQuizStatBtn.addEventListener('click', resetQuizStatFromProfil);
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => { const tabId = btn.dataset.tab; if (tabId) showPanel(tabId); });
+  });
+
+  loginOverlay.style.display = 'flex';
+  mainDashboard.style.display = 'none';
+</script>
+</body>
+</html>
